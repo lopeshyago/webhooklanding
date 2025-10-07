@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerador de Landing Page</title>
+    <style>
+        /* Adicione um CSS básico para o formulário */
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        input, textarea { padding: 10px; font-size: 1rem; }
+        button { padding: 12px; font-size: 1.1rem; cursor: pointer; }
+        #resultado { margin-top: 30px; white-space: pre-wrap; background-color: #f4f4f4; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Gerador de Landing Page com IA</h1>
+    <form id="lp-form">
+        <label for="nicho">Nicho do Site:</label>
+        <input type="text" id="nicho" placeholder="Ex: Clínica de Nutrição" required>
+        
+        <label for="descricao">Descrição do Site:</label>
+        <textarea id="descricao" rows="4" placeholder="Ex: Oferecemos planos de dieta personalizados com foco em bem-estar..." required></textarea>
+        
+        <button type="submit">Gerar Landing Page</button>
+    </form>
+    
+    <div id="resultado">Aguardando geração...</div>
+
+    <script>
+        const form = document.getElementById('lp-form');
+        const resultadoDiv = document.getElementById('resultado');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const nicho = document.getElementById('nicho').value;
+            const descricao = document.getElementById('descricao').value;
+            
+            // Substitua pela sua URL de Webhook do n8n
+            const webhookUrl = 'COLE_SUA_URL_DE_WEBHOOK_AQUI';
+
+            resultadoDiv.textContent = 'Gerando... Por favor, aguarde.';
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nicho, descricao })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro na rede: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                // Apenas para visualização. Você pode adaptar para download.
+                resultadoDiv.textContent = `HTML:\n${data.html}\n\nCSS:\n${data.css}\n\nJS:\n${data.js}`;
+                
+            } catch (error) {
+                resultadoDiv.textContent = `Ocorreu um erro: ${error.message}`;
+                console.error('Erro ao chamar o webhook:', error);
+            }
+        });
+    </script>
+</body>
+</html>
